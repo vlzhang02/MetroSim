@@ -1,0 +1,257 @@
+******************************************************************************
+* Proj 3: gerp
+* CS15 Spring 2022
+* README
+* Author: Valerie Zhang vzhang02, Charlotte Versavel cversa01
+******************************************************************************
+
+Program Purpose
+----------------
+    
+    The purpose of this program is to takes an input from the user and search 
+    through files within a given directory to find matching instances of the 
+    word. The user can specify if they want words to be case-sensitive or 
+    case-insensitive, and the results of their searches will be printed to an 
+    output file. They can also choose to print the output into a new output 
+    file or quit the program. 
+
+Compile/run:
+-----------
+
+    Compile using:
+        make treeTraversal
+        make stringProcesssing
+        make gerp
+        unit_test
+    Run executable with: 
+        ./treeTraversal Directory
+        ./stringProcessing 
+        ./gerp Directory outputFile
+        unit_test
+
+Acknowledgments:
+---------------
+    
+    We would like to thank Dameli for giving us advice on our design during 
+    our design check and Skylar for helping us during OH. We would also 
+    like to thank Annika for responding to our post on piazza. 
+    Additionally, we would like to thank Sean for giving us
+    feedback on chaining vs linear probing. 
+
+    
+Files:
+-----
+    
+    main.cpp: Runs gerp simulation
+
+    Gerp.cpp: An implementation of the Gerp class
+
+    Gerp.h: The interface of the Gerp class. 
+
+    HashTable.cpp: An implementation of the HashTable class
+
+    HashTable.h: The interface of the HashTable class. 
+
+    FileInfo.cpp: An implementation of the FileInfo class
+
+    FileInfo.h: The interface of the FileInfo class. 
+
+    FSTreeTraversal.cpp: An implementation of our tree traversal function.
+
+    stringProcessing.h: The interface of stripNonAlphaNum.
+
+    stringProcessing.cpp: An implementation of stripNonAlphaNum and its 
+    helper functions. 
+
+    The following files are command files we created for diff testing:
+        diff1_input.txt: A short list of words in files in our testing 
+                         directory.
+        diff2_input.txt: A list of commands including opening one new 
+                         output file. 
+        diff3_input.txt: This is to check a string with no alphanumeric 
+                         characters.
+        diff4_input.txt: This is to check the string "zoological".
+        diff5_input.txt: A list of commands which includes opening multiple 
+                         new output files.
+        diff_tinyData.txt: A list of words that are in files in the tinyData 
+                           testing directory.
+
+    The following files are output files used for diff testing:
+        my_output.txt: contains the output
+        my_cerr.txt: containts statements printed to cerr by the program
+        my_cout.txt: contains statments printed to cout by the program.
+
+    unit_tests.h: unit_test file with all tests coded for each member function
+
+    Makefile: file to build the program
+
+    This file gives informations on the program including the files, the 
+    testing done, and the data structure used. It also includes 
+    acknowledgements for helped received. 
+
+Architectural Overview:
+---------------
+
+    This program contains 3 modules: a FileInfo instance, a HashTable instance,
+    and a Gerp instance. The Gerp implementation contains a FileInfo instance 
+    and a Hashtable instance. The FileInfo implementation is a vector of File 
+    structs and the Hashtable instance is an array of wordEntry structs that 
+    is stored on the heap. 
+
+Data Structures:
+---------------
+    
+    The main data structures of this program are a vector, N-ary tree and a 
+    hash table. A vector is a sequence container similar to an array, but is 
+    able to grow dynamically. Vectors use an array to store data, but it's 
+    not restricted by a limited capacity. Elements in a vector are stored on 
+    the heap and can be easily accessed with indices. In this implementation, 
+    there are many instances of vectors of structs. In the FileInfo 
+    implementation, a FileInfo instance is a vector of File structs which 
+    stores the name of teh file and a vector of strings which store the 
+    directory path and all the lines in each file. 
+    
+    A hash table is a data strucure that stores key/value pairs in an array 
+    like structure where the index is determined using the key and a hash 
+    function. Values are easily accessed using their corresponding key. In 
+    this implementation, the hash table is an array of structs which stores 
+    a completely lowercase string as it's key, and a vector of structs which 
+    stores the appearances of the word. This second vector store information
+    in relation to the FileInfo instance. 
+    
+    A N-ary tree is tree data structure composed of nodes that have n number 
+    of children and some stored value. In this implementation, nodes have 
+    pointers to the next node in the tree, to it's parent node, and a vector 
+    of filenames . 
+
+Testing:
+-------
+
+Phase 1:
+    Tree Traversal Testing:
+        Used a (testing) main within the cpp file to call the function. 
+        We checked the outputs with the provided directories: TinyData 
+        GutenbergSmall and GutenbergLarge, as well as with an empty FSTree.
+        Several bugs we encountered included having the '/' character print 
+        too many times (or not at all). Additionally, sometimes the directory 
+        path would print the root directory twice or not at all. Also, the 
+        filepath didn't included directories without files(ie. only 
+        subdirectories or nothing). We used print statments in various places 
+        in our function to locate the source of these problems. 
+
+    String Processing Testing: 
+        We used the main in our stringProcessing.cpp file to test our function
+        and its helper functions. We tested the cases of just leading and just
+        trailing characters, and string with both leading and trailing 
+        characters. We also tested the cases for empty string and string with 
+        no alphanumeric characters.
+        Some bugs we found were finding the currect length of the substring 
+        and finding the index of the last valid alphanumeric character. We
+        used print statements to print out the length of the substring, the
+        front and back indexes of the string to parse, and the substring 
+        itself to debug. 
+
+Phase 2:
+    HashTable Class testing:
+        We used unit_test to test out HashTable class. We started off with our
+        constructor and destructor. We then moved on to parseAndLower() 
+        function. It is a helper functions used by add() which is used by 
+        parseLineAndAdd in the File Info class, so it was important that we 
+        implemented it correctly. We also make our own testing directory with 
+        words with leading and trailing characters and tested that against the 
+        reference implementation to see whether words in the files were parsed 
+        through along with the queries. We temporarily made parseAndLower() a 
+        public function to unit_test. Some bugs we ran into was figuring out 
+        how to include our stripNonAlphaNum function into our class. We fixed 
+        this by including the .o file in the unit_test compiling rule in our 
+        Makefile. 
+
+        We moved onto our hashIndex function and tested it in unit_test. We 
+        checked to see if the index we got was within the capacity of our 
+        table. Next we moved onto our add() helper functions addNewWord() and 
+        addExistingWord(). We tested these and add() in unit_test to make sure 
+        the operations for each case were done correctly. 
+
+        Next we coded and tested linearProbeIndex(), expand(), and add(). To 
+        test for collisions, we temporarily made the intial capacity very 
+        small(ie. 2) to force a collision. We used print statements before and 
+        after function calls and before and after entering loops to debug these
+        functions. We also made add() temporarily public for ease of testing 
+        before making it private. 
+
+        Next we coded getWordEntry which would be used by the print functions 
+        in gerp class. This function is tested there. 
+    
+    File Info Class testing:
+        We used unit_test to test our File Info class. We started off with the 
+        constructors, destructor, and openFile(). We wrote a simple test for 
+        the default constructor to check for fatal memory errors. To debug our 
+        secondary constructor and openFile(), we put print statements before, 
+        in the middle, and after loops to locate where bugs originated from so 
+        we could fix them. Some bugs we found were trying to open just a file 
+        without the filepath, adding a new File to the file vector, and trying 
+        to declare a vector on the heap.
+
+        We then coded our constructor helper which would both parse through 
+        all the files and the lines in each file to initialize the FileInfo 
+        instance ahd HashTable instance, along with all the helper functions 
+        in it. We used unit_test to test most of the functions and overall 
+        helper function. We also used print statements to make sure the 
+        directoryPath was being updated each time before being added to the 
+        lines vector in a File instance. 
+
+        We coded our "getters" and made sure they returned the filepath or 
+        the line given a file and/or line index. We used these for testing 
+        the constructor helper in unit_test.
+
+        We then had a big design change to initialize a FileInfo instance 
+        and HashTable instance within our third class so we can both add 
+        lines to the FileInfo class and parse through each line and add 
+        word entries to our hash table class. 
+        
+    gerp class: 
+
+        We used unit_test to test our funtions in the Gerp class. We started
+        with the constructor helper with would hlep constuct the FileInfo
+        instance and Hashtable instance. This function allowed us to
+        simultaneously copy all the lines and files from the path and parse
+        through each line so words and their appearances could be added to the
+        hash table. Most of the code for this was in our old constructor
+        helper for a FileInfo Instance, so we used the tests we wrote for that.
+
+        Then we implemented our print functions. We started with case
+        insensitive and then case sensititve helper functions, and then the
+        more general one. We used print statements to make sure each case is
+        reached when testing in unit_test. We made the helper functions
+        temporarily public when performing testing.
+
+        We then coded our command loop and tested each case. We started with 
+        anyString, @i anyString, and quit. We used diff testing with the 
+        reference implementation to test quitting in different ways (ie. eof, 
+        ctrl+c from the keyboard, @q, etc.). We then coded @f which is one we 
+        were stuck on for a bit. We then decided to make a private ostream 
+        member variable that could open and close files easily and we'd only 
+        need to get the name from the user. 
+        
+        We then did diff testing with our own command files with our own small 
+        testing directory, tinyData, smallGutenberg, and largeGutenberg. When 
+        doing diff testing with smallGutenberg, we discovered that the program 
+        would time out due to us incorrectly implenting fileIndexs references 
+        our FileInfo instance. We solved this by including a private member 
+        variable with kept count of the total number of files in our FileInfo 
+        instance and used that to assign the file index variable in each 
+        wordInstance. We also found other bugs when a string with no 
+        alphanumeric characters was queried. We solved this by performing a 
+        check for the length of the string after it had been stripped and 
+        lowered. We also found a bug in our stripNonAlphaNum function which 
+        accidentally stripped words starting with lowercase 'z'. We created a 
+        temporary functioin that printed the same line number from every file 
+        to see that our FileInfo instance had every line. We then created print
+        functions that printed the info in word instances and word entries in 
+        our hash table. These functions were used to determine that it wasn't 
+        our hash table or file info instances that were the issue to the 
+        problem.
+
+
+
+    
